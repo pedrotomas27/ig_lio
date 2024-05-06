@@ -18,7 +18,7 @@
 
 #include "point_type.h"
 
-enum class LidarType { LIVOX, VELODYNE, OUSTER };
+enum class LidarType { LIVOX, VELODYNE, OUSTER, HESAI, VELODYNEM1600};
 
 // for Velodyne LiDAR
 struct VelodynePointXYZIRT {
@@ -32,6 +32,33 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
     VelodynePointXYZIRT,
     (float, x, x)(float, y, y)(float, z, z)(float, intensity, intensity)(
         uint16_t, ring, ring)(float, time, time))
+struct VelodyneM1600PointXYZIRT {
+  PCL_ADD_POINT4D;
+  uint8_t intensity;
+  uint8_t ring;
+  uint32_t timestampSec;
+  uint32_t timestampNsec;
+  
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(
+    VelodyneM1600PointXYZIRT,
+    (float, x, x)(float, y, y)(float, z, z)(uint8_t, intensity, intensity)(
+        uint8_t, ring, ring)(uint32_t, timestampSec, timestampSec)(uint32_t, timestampNsec, timestampNsec))
+        
+
+struct HesaiPointXYZIRT {
+  PCL_ADD_POINT4D;
+  float intensity;
+  double timestamp;
+  uint16_t ring;
+  // Add any additional fields specific to Hesai LiDAR
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(
+    HesaiPointXYZIRT,
+    (float, x, x)(float, y, y)(float, z, z)(float, intensity, intensity)(double, timestamp, timestamp)(
+        uint16_t, ring, ring))
 
 // for Ouster LiDAR
 struct OusterPointXYZIRT {
@@ -103,6 +130,10 @@ class PointCloudPreprocess {
 
   void ProcessVelodyne(const sensor_msgs::PointCloud2::ConstPtr& msg,
                        pcl::PointCloud<PointType>::Ptr& cloud_out);
+  void ProcessVelodyneM1600(const sensor_msgs::PointCloud2::ConstPtr& msg,
+                       pcl::PointCloud<PointType>::Ptr& cloud_out);
+  void ProcessHesai(const sensor_msgs::PointCloud2::ConstPtr& msg,
+                  pcl::PointCloud<PointType>::Ptr& cloud_out);
 
   void ProcessOuster(const sensor_msgs::PointCloud2::ConstPtr& msg,
                      pcl::PointCloud<PointType>::Ptr& cloud_out);

@@ -1,0 +1,20 @@
+lidar_topic: /m1600/pcl2
+imu_topic: /mavros/imu/data
+lidar_type: velodyne # livox velodyne ouster
+min_radius: 1
+max_radius: 150
+point_filter_num: 6
+#time_scale: 1000.0 # nclt: 0.001 other: 1000.0
+enable_ahrs_initalization: false
+enable_acc_correct: false
+
+
+gravity: 9.80665
+
+# botanic graden
+
+t_imu_lidar : [0.011775 0.006253 0.0438256454]
+R_imu_lidar: [1, 0, 0,
+              0, 1, 0,
+              0, 0, 1]
+

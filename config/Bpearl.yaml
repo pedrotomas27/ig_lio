@@ -1,0 +1,21 @@
+#lidar_topic: /hesai/pandar
+lidar_topic: /rslidar_points 
+imu_topic: /imu/data
+lidar_type: Hesai # livox velodyne ouster Hesai Bpearl
+min_radius: 1
+max_radius: 100
+point_filter_num: 5
+# time_scale: 0 # nclt: 0.001 other: 1000.0
+enable_ahrs_initalization: false
+enable_acc_correct: false
+
+
+gravity: 9.80665
+
+
+
+
+t_imu_lidar : [0 0 0]
+R_imu_lidar: [1, 0, 0,
+                0, -1, 0,
+                0, 0, -1]

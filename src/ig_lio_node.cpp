@@ -37,6 +37,7 @@ std::mutex buff_mutex;
 // data deque
 std::deque<std::pair<double, pcl::PointCloud<PointType>::Ptr>> cloud_buff;
 std::deque<sensor_msgs::Imu> imu_buff;
+std::deque<nav_msgs::Odometry> gnss_buffVelodyne;
 std::deque<nav_msgs::Odometry> gnss_buff;
 
 // ros visualization
@@ -98,6 +99,7 @@ void ImuCallBack(const sensor_msgs::Imu::ConstPtr& msg_ptr) {
 }
 
 // process Velodyne and Outser
+// Ill try to add Hesai here
 void CloudCallBack(const sensor_msgs::PointCloud2::ConstPtr& msg) {
   static double last_lidar_timestamp = 0.0;
   timer.Evaluate(
@@ -553,12 +555,16 @@ int main(int argc, char** argv) {
   nh.param<std::string>("lidar_type", lidar_type_string, "velodyne");
   if (lidar_type_string == "velodyne") {
     lidar_type = LidarType::VELODYNE;
+  } else if (lidar_type_string == "M1600") {
+    lidar_type = LidarType::VELODYNEM1600;
+  } else if (lidar_type_string == "Hesai") {
+    lidar_type = LidarType::HESAI;
   } else if (lidar_type_string == "ouster") {
     lidar_type = LidarType::OUSTER;
   } else if (lidar_type_string == "livox") {
     lidar_type = LidarType::LIVOX;
   } else {
-    LOG(ERROR) << "erro lidar type!";
+    LOG(ERROR) << "Error lidar type!";
     exit(0);
   }
   ros::Subscriber cloud_sub;

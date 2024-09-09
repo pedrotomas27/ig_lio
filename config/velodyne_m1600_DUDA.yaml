@@ -1,10 +1,8 @@
-lidar_topic: /lidar_0/m1600/pcl2
-#lidar_topic: /livox/lidar
-imu_topic: /filtered_imu_data
-lidar_type: M1600 # livox velodyne ouster
-#lidar_type: livox
+lidar_topic: /velodyne_points
+imu_topic: /vectornav/IMU
+lidar_type: 2 # livox velodyne ouster
 min_radius: 1
-max_radius: 30
+max_radius: 100
 point_filter_num: 6
 #time_scale: 1000.0 # nclt: 0.001 other: 1000.0
 enable_ahrs_initalization: false
@@ -14,10 +12,11 @@ scan_resolution: 0.5
 voxel_map_resolution: 0.5
 max_iterations: 20
 
-acc_cov: 0.01
-gyr_cov: 0.01
+acc_cov: 0.001
+gyr_cov: 0.001
 ba_cov: 0.0001
 bg_cov: 0.0001
+
 
 gicp_constraints_gain: 100.0
 point2plane_constraints_gain: 1000.0
@@ -39,7 +38,8 @@ init_bg_cov: 0.0001
 #              0, 1, 0,
 #              0, 0, 1]
 
-t_imu_lidar : [0.16592 0.06659 0.13617]
-R_imu_lidar: [1, 0, 0,
-              0, 1, 0,
-              0, 0, 1]
+t_imu_lidar : [0.0020123, 0.0, -0.0755]
+
+R_imu_lidar: [ 1.0000000, -0.0000073, -0.0000000,
+  -0.0000073,  1.0000000,  0.0000073,
+   0.0000000,  0.0000073, 1.0000000 ]

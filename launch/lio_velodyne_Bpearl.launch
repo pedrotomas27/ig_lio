@@ -1,5 +1,11 @@
 <launch>
+    
+    <param name="use_sim_time" value="true" />
+
+    
     <node pkg="tf" type="static_transform_publisher" name="lidar_0_broadcaster" args="0.15 0 0.13 0 0 0 base lidar_0 0.1" />
+    <node pkg="tf" type="static_transform_publisher" name="rslidar_broadcaster" args="0.15 0 0.13 0 0.309017 0 base rslidar 0.1" />
+
     <node pkg="tf" type="static_transform_publisher" name="camera_link_broadcaster" args="0.16 0 0.06 0 0 0 base camera_link 0.1" />
     <node pkg="python_executables" type="Unitree_tranformer.py" name="Unitree_tranformer" output="screen" />
     <node pkg="python_executables" type="imu_filter.py" name="imu_filter" output="screen" />
@@ -7,8 +13,9 @@
     <node pkg="python_executables" type="navtogps.py" name="navtogps" output="screen" />
     
     
-    <param name="use_sim_time" value="true" />
-    <rosparam command="load" file="$(find ig_lio)/config/velodyne_m1600.yaml" />
+    
+    
+    <rosparam command="load" file="$(find ig_lio)/config/Bpearl.yaml" />
 
     <node pkg="ig_lio" type="ig_lio_node" name="ig_lio_node" output="screen" />
     <!-- Add imu_filter_madgwick node -->

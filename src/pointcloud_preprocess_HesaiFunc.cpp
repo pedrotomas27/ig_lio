@@ -44,14 +44,12 @@ void PointCloudPreprocess::Process(
   case LidarType::HESAI:
     ProcessHesai(msg, cloud_out);
     break;
-  case LidarType::VELODYNEM1600:
-    ProcessVelodyneM1600(msg, cloud_out);
-    break;
   default:
     LOG(INFO) << "Error LiDAR Type!!!" << std::endl;
     exit(0);
   }
 }
+
 void PointCloudPreprocess::ProcessVelodyne(
     const sensor_msgs::PointCloud2::ConstPtr& msg,
     pcl::PointCloud<PointType>::Ptr& cloud_out) {
@@ -138,59 +136,12 @@ void PointCloudPreprocess::ProcessVelodyne(
     }
   }
 }
-
-void PointCloudPreprocess::ProcessVelodyneM1600(
-    const sensor_msgs::PointCloud2::ConstPtr& msg,
-    pcl::PointCloud<PointType>::Ptr& cloud_out) {
-  pcl::PointCloud<VelodyneM1600PointXYZIRT> cloud_origin;
-  pcl::fromROSMsg(*msg, cloud_origin);
-
-  // Clear the output cloud
-  cloud_out->clear();
-
-  if (cloud_origin.empty())
-    return;
-
-  // Reserve memory to prevent reallocation
-  cloud_out->reserve(cloud_origin.size());
-
-  // Calculate timestamp of the first point
-  double time_head_sec = cloud_origin.points[0].timestampSec;
-  double time_head_nsec = cloud_origin.points[0].timestampNsec;
-  double time_head = time_head_sec + time_head_nsec * 1e-9;
-
-  // Iterate through the original cloud
-  for (size_t i = 0; i < cloud_origin.size(); ++i) {
-    if ((i % config_.point_filter_num == 0) && !HasInf(cloud_origin.at(i)) &&
-        !HasNan(cloud_origin.at(i))) {
-      PointType point;
-      point.normal_x = 0;
-      point.normal_y = 0;
-      point.normal_z = 0;
-      point.x = cloud_origin.at(i).x;
-      point.y = cloud_origin.at(i).y ;
-      point.z = cloud_origin.at(i).z ;
-      point.intensity = cloud_origin.at(i).intensity;
-
-      // Calculate timestamp of the current point
-      double current_sec = cloud_origin.at(i).timestampSec;
-      double current_nsec = cloud_origin.at(i).timestampNsec;
-      double current_time = current_sec + current_nsec * 1e-9;
-
-      // Set curvature based on timestamp difference
-      point.curvature = (current_time - time_head) * 1000; // Curvature unit: ms
-
-      // Add the point to the output cloud
-      cloud_out->push_back(point);
-    }
-  }
-}
 void PointCloudPreprocess::ProcessHesai(
     const sensor_msgs::PointCloud2::ConstPtr& msg,
     pcl::PointCloud<PointType>::Ptr& cloud_out) {
-    pcl::PointCloud<HesaiPointXYZIRT> cloud_origin;
-    pcl::fromROSMsg(*msg, cloud_origin);
-    double time_begin = cloud_origin.points[0].timestamp;
+  pcl::PointCloud<HesaiPointXYZIRT> cloud_origin;
+  pcl::fromROSMsg(*msg, cloud_origin);
+
   for (size_t i = 0; i < cloud_origin.size(); ++i) {
     if ((i % config_.point_filter_num == 0) && !HasInf(cloud_origin.at(i)) &&
         !HasNan(cloud_origin.at(i))) {
@@ -202,15 +153,13 @@ void PointCloudPreprocess::ProcessHesai(
       point.y = cloud_origin.at(i).y;
       point.z = cloud_origin.at(i).z;
       point.intensity = cloud_origin.at(i).intensity;
-      double current_time = cloud_origin.at(i).timestamp;
-      point.curvature = (current_time- time_begin) * 1000;
-      
+      // Assuming curvature information is not available in Hesai LiDAR data.
+      // You need to adjust this line according to the actual data structure.
+      point.curvature = 0.0; // Adjust this according to the actual curvature information in Hesai LiDAR data
       cloud_out->push_back(point);
     }
   }
 }
-
-
 
 
 void PointCloudPreprocess::ProcessOuster(
@@ -231,7 +180,7 @@ void PointCloudPreprocess::ProcessOuster(
       point.z = cloud_origin.at(i).z;
       point.intensity = cloud_origin.at(i).intensity;
       // ms
-      point.curvature = cloud_origin.at(i).t * 1000;
+      point.curvature = cloud_origin.at(i).t * 1e-6;
       cloud_out->push_back(point);
     }
   }
